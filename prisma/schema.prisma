@@ -25,7 +25,7 @@ model Roast {
   nickname  String?
   // Sharing slug (for /r/[slug] URLs)
   slug      String   @unique
-  // Language: "tr" | "en"
+  // Language: "en" | "tr" | "de" | "es" | "fr" | "it" | "pt" | "ru" | "nl" | "zh"
   language  String   @default("en")
   // Resume score 0-100 (AI scored)
   score     Int      @default(0)

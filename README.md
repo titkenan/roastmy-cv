@@ -11,7 +11,7 @@ Built with Next.js 16, TypeScript, Tailwind CSS, Prisma, and GLM (via `z-ai-web-
 ## ✨ Features
 
 - 🎭 **3 modes**: Brutal Roast (funny/savage), Pro Feedback (FAANG recruiter style), Job Match (vs. specific role)
-- 🌍 **Bilingual**: English + Turkish, auto-detected
+- 🌍 **10 languages**: English, Türkçe, Deutsch, Español, Français, Italiano, Português, Русский, Nederlands, 中文 — auto-detected from browser
 - 📊 **Scored**: AI gives 0-100 score with animated progress ring
 - 🎨 **Beautiful dark UI**: glassmorphism, Framer Motion animations, mobile-first
 - 🔗 **Shareable**: every roast gets a unique URL (`/#/r/epic-falcon-8448`)
@@ -159,7 +159,7 @@ The pricing UI is built and visible in-app. To activate:
 - [ ] **v1.1**: PDF upload + LinkedIn import
 - [ ] **v1.2**: Stripe + Pro tier launch
 - [ ] **v1.3**: Cover letter generator + LinkedIn optimizer
-- [ ] **v1.4**: Multi-language (Spanish, German, French)
+- [x] **v1.4**: Multi-language (EN / TR / DE / ES / FR / IT / PT / RU / NL / ZH) ✅
 - [ ] **v1.5**: Team plans (recruiters can roast multiple candidates)
 - [ ] **v2.0**: AI-powered resume rewriter (not just feedback)
 

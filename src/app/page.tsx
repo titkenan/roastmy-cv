@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, Github, Sparkles, Copy, Check, Twitter, ArrowRight, Zap, Lock, Globe, Star, ChevronDown, Loader2, Wand2 } from 'lucide-react';
+import { Flame, Github, Sparkles, Copy, Check, Twitter, ArrowRight, Zap, Lock, Globe, Star, ChevronDown, Loader2, Wand2, Check as CheckIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import {
   UI_TEXT,
   MODE_META,
+  LANGUAGES,
+  detectLanguageFromBrowser,
+  normalizeLanguage,
   type RoastMode,
   type Language,
   type RoastResponse,
@@ -35,6 +38,7 @@ export default function Home() {
   const [galleryLoading, setGalleryLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showPricing, setShowPricing] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -43,10 +47,20 @@ export default function Home() {
 
   // ============ EFFECTS ============
   useEffect(() => {
-    // Detect language from browser
-    const browserLang = navigator.language.toLowerCase();
-    if (browserLang.startsWith('tr')) setLang('tr');
+    // Detect language from browser (supports 10 languages)
+    setLang(detectLanguageFromBrowser());
   }, []);
+
+  // Close lang menu on outside click
+  useEffect(() => {
+    if (!langMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-lang-menu]')) setLangMenuOpen(false);
+    };
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, [langMenuOpen]);
 
   useEffect(() => {
     // Load gallery on mount
@@ -88,7 +102,7 @@ export default function Home() {
         result: data.result,
         remaining: -1,
       });
-      setLang(data.language || 'en');
+      setLang(data.language ? (normalizeLanguage(data.language)) : 'en');
     } catch {}
   }, []);
 
@@ -144,9 +158,7 @@ export default function Home() {
   const handleShare = () => {
     if (!roast) return;
     const url = `${window.location.origin}/#/r/${roast.slug}`;
-    const text = lang === 'tr'
-      ? `AI özgeçmişimi roastled: "${roast.result.title}" 🔥\n\nSen de dene:`
-      : `AI roasted my resume: "${roast.result.title}" 🔥\n\nTry yours:`;
+    const text = t.shareTweetText.replace('{title}', roast.result.title);
     window.open(
       `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
       '_blank'
@@ -192,12 +204,51 @@ export default function Home() {
             >
               {t.navPricing}
             </button>
-            <button
-              onClick={() => setLang(lang === 'en' ? 'tr' : 'en')}
-              className="text-sm text-neutral-400 hover:text-neutral-100 transition px-2 py-1 uppercase"
-            >
-              {lang === 'en' ? '🇹🇷 TR' : '🇬🇧 EN'}
-            </button>
+            {/* LANGUAGE PICKER */}
+            <div className="relative" data-lang-menu>
+              <button
+                onClick={() => setLangMenuOpen((v) => !v)}
+                className="flex items-center gap-1 text-sm text-neutral-400 hover:text-neutral-100 transition px-2 py-1 rounded-md hover:bg-neutral-900/60"
+                aria-label={t.langMenuLabel}
+              >
+                <Globe size={14} />
+                <span className="uppercase">{lang}</span>
+                <ChevronDown size={12} className={`transition ${langMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+              <AnimatePresence>
+                {langMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-44 rounded-lg border border-neutral-800 bg-neutral-950/95 backdrop-blur-xl shadow-2xl shadow-black/60 py-1 z-50"
+                  >
+                    {LANGUAGES.map((l) => {
+                      const active = lang === l.code;
+                      return (
+                        <button
+                          key={l.code}
+                          onClick={() => {
+                            setLang(l.code);
+                            setLangMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition ${
+                            active
+                              ? 'text-orange-400 bg-orange-500/10'
+                              : 'text-neutral-300 hover:bg-neutral-900 hover:text-white'
+                          }`}
+                        >
+                          <span className="text-base">{l.flag}</span>
+                          <span className="flex-1 text-left">{l.nativeName}</span>
+                          {active && <CheckIcon size={14} />}
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <a
               href="https://github.com"
               target="_blank"
@@ -558,7 +609,7 @@ export default function Home() {
                   {t.proCta}
                 </Button>
                 <Button variant="ghost" onClick={() => setShowPricing(false)} className="w-full mt-2 text-neutral-500">
-                  Close
+                  {t.closeBtn}
                 </Button>
               </Card>
             </motion.div>
@@ -746,7 +797,7 @@ function RoastResultCard({
               className="bg-neutral-900 border-neutral-800 hover:bg-neutral-800"
             >
               {copied ? <Check size={14} className="mr-1" /> : <Copy size={14} className="mr-1" />}
-              {copied ? 'Copied!' : t.copyBtn}
+              {copied ? t.copiedBtn : t.copyBtn}
             </Button>
             <Button
               onClick={onNew}

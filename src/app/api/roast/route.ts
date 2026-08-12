@@ -2,9 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import ZAI from 'z-ai-web-dev-sdk';
 import { db } from '@/lib/db';
+import { normalizeLanguage, type Language } from '@/lib/roast-types';
 
 // ============ RATE LIMIT: 3 free roasts per IP per day ============
 const FREE_DAILY_LIMIT = 3;
+
+// Map language code → human-readable name for the AI prompt
+const LANG_NAME: Record<Language, string> = {
+  en: 'English',
+  tr: 'Turkish',
+  de: 'German',
+  es: 'Spanish',
+  fr: 'French',
+  it: 'Italian',
+  pt: 'Portuguese',
+  ru: 'Russian',
+  nl: 'Dutch',
+  zh: 'Simplified Chinese',
+};
 
 async function getIpHash(req: NextRequest): Promise<string> {
   const forwarded = req.headers.get('x-forwarded-for') || 'unknown';
@@ -58,8 +73,8 @@ interface RoastResult {
   suggestions: string[];
 }
 
-function buildSystemPrompt(mode: RoastMode, language: 'tr' | 'en', targetJob?: string): string {
-  const lang = language === 'tr' ? 'Turkish' : 'English';
+function buildSystemPrompt(mode: RoastMode, language: Language, targetJob?: string): string {
+  const lang = LANG_NAME[language] || 'English';
 
   if (mode === 'roast') {
     return `You are a brutally honest, sarcastic career coach who ROASTS resumes with humor but also gives genuinely useful advice. Think of a stand-up comedian who happens to be a hiring manager.
@@ -136,13 +151,14 @@ function nicknameRandom(): string {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { resumeText, mode = 'roast', language = 'en', targetJob, makePublic = false } = body as {
+    const { resumeText, mode = 'roast', language: rawLang = 'en', targetJob, makePublic = false } = body as {
       resumeText: string;
       mode?: RoastMode;
-      language?: 'tr' | 'en';
+      language?: string;
       targetJob?: string;
       makePublic?: boolean;
     };
+    const language = normalizeLanguage(rawLang);
 
     if (!resumeText || resumeText.trim().length < 50) {
       return NextResponse.json(
@@ -173,9 +189,8 @@ export async function POST(req: NextRequest) {
     // ============ CALL AI ============
     const zai = await ZAI.create();
     const systemPrompt = buildSystemPrompt(mode, language, targetJob);
-    const userPrompt = language === 'tr'
-      ? `Bu özgeçmiş'i değerlendir ve JSON döndür:\n\n${resumeText}`
-      : `Review this resume and return JSON:\n\n${resumeText}`;
+    const langName = LANG_NAME[language] || 'English';
+    const userPrompt = `Please review this resume and return the JSON response in ${langName}:\n\n${resumeText}`;
 
     const completion = await zai.chat.completions.create({
       messages: [
