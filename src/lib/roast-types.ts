@@ -209,6 +209,14 @@ export interface UIText {
   errorTooLong: string;
   closeBtn: string;
   langMenuLabel: string;
+  // Stripe / Auth UI
+  signInBtn: string;
+  proActiveLabel: string;
+  manageSubscriptionBtn: string;
+  upgradingBtn: string;
+  upgradeSuccessTitle: string;
+  upgradeSuccessMsg: string;
+  proUnlimited: string;
 }
 
 export const UI_TEXT: Record<Language, UIText> = {
@@ -273,6 +281,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: 'Resume too long. Keep it under 12000 characters.',
     closeBtn: 'Close',
     langMenuLabel: 'Language',
+    signInBtn: 'Sign in',
+    proActiveLabel: 'Your Pro is active',
+    manageSubscriptionBtn: 'Manage subscription',
+    upgradingBtn: 'Redirecting...',
+    upgradeSuccessTitle: '🔥 Welcome to Pro!',
+    upgradeSuccessMsg: 'You now have unlimited roasts. Roast away!',
+    proUnlimited: 'Unlimited',
   },
   tr: {
     navBrand: 'RoastMy.cv',
@@ -335,6 +350,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: 'Özgeçmiş çok uzun. 12000 karakterin altında tut.',
     closeBtn: 'Kapat',
     langMenuLabel: 'Dil',
+    signInBtn: 'Giriş yap',
+    proActiveLabel: 'Pro aktif',
+    manageSubscriptionBtn: 'Aboneliği yönet',
+    upgradingBtn: 'Yönlendiriliyor...',
+    upgradeSuccessTitle: '🔥 Pro\'ya hoş geldin!',
+    upgradeSuccessMsg: 'Artık sınırsız roast hakkın var. Roastlamaya başla!',
+    proUnlimited: 'Sınırsız',
   },
   de: {
     navBrand: 'RoastMy.cv',
@@ -397,6 +419,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: 'Lebenslauf zu lang. Unter 12000 Zeichen halten.',
     closeBtn: 'Schließen',
     langMenuLabel: 'Sprache',
+    signInBtn: 'Anmelden',
+    proActiveLabel: 'Pro ist aktiv',
+    manageSubscriptionBtn: 'Abo verwalten',
+    upgradingBtn: 'Weiterleitung...',
+    upgradeSuccessTitle: '🔥 Willkommen bei Pro!',
+    upgradeSuccessMsg: 'Du hast jetzt unbegrenzte Roasts. Los geht\'s!',
+    proUnlimited: 'Unbegrenzt',
   },
   es: {
     navBrand: 'RoastMy.cv',
@@ -459,6 +488,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: 'CV demasiado largo. Mantén bajo 12000 caracteres.',
     closeBtn: 'Cerrar',
     langMenuLabel: 'Idioma',
+    signInBtn: 'Iniciar sesión',
+    proActiveLabel: 'Pro activo',
+    manageSubscriptionBtn: 'Gestionar suscripción',
+    upgradingBtn: 'Redirigiendo...',
+    upgradeSuccessTitle: '🔥 ¡Bienvenido a Pro!',
+    upgradeSuccessMsg: 'Ahora tienes roasts ilimitados. ¡A roostear!',
+    proUnlimited: 'Ilimitado',
   },
   fr: {
     navBrand: 'RoastMy.cv',
@@ -521,6 +557,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: 'CV trop long. Reste sous 12000 caractères.',
     closeBtn: 'Fermer',
     langMenuLabel: 'Langue',
+    signInBtn: 'Connexion',
+    proActiveLabel: 'Pro actif',
+    manageSubscriptionBtn: 'Gérer l\'abonnement',
+    upgradingBtn: 'Redirection...',
+    upgradeSuccessTitle: '🔥 Bienvenue sur Pro !',
+    upgradeSuccessMsg: 'Tu as maintenant des roasts illimités. Lance-toi !',
+    proUnlimited: 'Illimité',
   },
   it: {
     navBrand: 'RoastMy.cv',
@@ -583,6 +626,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: 'CV troppo lungo. Mantieni sotto 12000 caratteri.',
     closeBtn: 'Chiudi',
     langMenuLabel: 'Lingua',
+    signInBtn: 'Accedi',
+    proActiveLabel: 'Pro attivo',
+    manageSubscriptionBtn: 'Gestisci abbonamento',
+    upgradingBtn: 'Reindirizzamento...',
+    upgradeSuccessTitle: '🔥 Benvenuto in Pro!',
+    upgradeSuccessMsg: 'Ora hai roast illimitati. Inizia!',
+    proUnlimited: 'Illimitato',
   },
   pt: {
     navBrand: 'RoastMy.cv',
@@ -645,6 +695,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: 'CV muito longo. Mantenha abaixo de 12000 caracteres.',
     closeBtn: 'Fechar',
     langMenuLabel: 'Idioma',
+    signInBtn: 'Entrar',
+    proActiveLabel: 'Pro ativo',
+    manageSubscriptionBtn: 'Gerenciar assinatura',
+    upgradingBtn: 'Redirecionando...',
+    upgradeSuccessTitle: '🔥 Bem-vindo ao Pro!',
+    upgradeSuccessMsg: 'Agora você tem roasts ilimitados. Comece!',
+    proUnlimited: 'Ilimitado',
   },
   ru: {
     navBrand: 'RoastMy.cv',
@@ -707,6 +764,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: 'Резюме слишком длинное. Сократи до 12000 символов.',
     closeBtn: 'Закрыть',
     langMenuLabel: 'Язык',
+    signInBtn: 'Войти',
+    proActiveLabel: 'Pro активен',
+    manageSubscriptionBtn: 'Управление подпиской',
+    upgradingBtn: 'Перенаправление...',
+    upgradeSuccessTitle: '🔥 Добро пожаловать в Pro!',
+    upgradeSuccessMsg: 'Теперь у вас безлимитные росты. Начинайте!',
+    proUnlimited: 'Безлимит',
   },
   nl: {
     navBrand: 'RoastMy.cv',
@@ -769,6 +833,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: 'CV te lang. Houd onder 12000 tekens.',
     closeBtn: 'Sluiten',
     langMenuLabel: 'Taal',
+    signInBtn: 'Inloggen',
+    proActiveLabel: 'Pro actief',
+    manageSubscriptionBtn: 'Abonnement beheren',
+    upgradingBtn: 'Doorsturen...',
+    upgradeSuccessTitle: '🔥 Welkom bij Pro!',
+    upgradeSuccessMsg: 'Je hebt nu onbeperkte roasts. Begin maar!',
+    proUnlimited: 'Onbeperkt',
   },
   zh: {
     navBrand: 'RoastMy.cv',
@@ -831,6 +902,13 @@ export const UI_TEXT: Record<Language, UIText> = {
     errorTooLong: '简历太长。请控制在 12000 字符以内。',
     closeBtn: '关闭',
     langMenuLabel: '语言',
+    signInBtn: '登录',
+    proActiveLabel: '专业版已激活',
+    manageSubscriptionBtn: '管理订阅',
+    upgradingBtn: '正在跳转...',
+    upgradeSuccessTitle: '🔥 欢迎升级专业版！',
+    upgradeSuccessMsg: '你现在拥有无限吐槽次数。开始吧！',
+    proUnlimited: '无限',
   },
 };
 

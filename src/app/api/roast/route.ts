@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import ZAI from 'z-ai-web-dev-sdk';
+import { getServerSession } from 'next-auth/next';
 import { db } from '@/lib/db';
 import { normalizeLanguage, type Language } from '@/lib/roast-types';
+import { authOptions } from '@/lib/auth';
+import { isProUser, FREE_DAILY_LIMIT, PRO_DAILY_LIMIT } from '@/lib/stripe';
 
-// ============ RATE LIMIT: 3 free roasts per IP per day ============
-const FREE_DAILY_LIMIT = 3;
+// ============ RATE LIMIT ============
+// Free: 3 roasts/day per IP — Pro: 100/day (effectively unlimited)
+// Authenticated users: tracked by userId if available, else by IP
 
 // Map language code → human-readable name for the AI prompt
 const LANG_NAME: Record<Language, string> = {
@@ -27,17 +31,18 @@ async function getIpHash(req: NextRequest): Promise<string> {
   return crypto.createHash('sha256').update(ip).digest('hex').slice(0, 32);
 }
 
-async function checkRateLimit(ipHash: string): Promise<{ allowed: boolean; remaining: number }> {
+async function checkRateLimit(ipHash: string, isPro: boolean): Promise<{ allowed: boolean; remaining: number }> {
+  const limit = isPro ? PRO_DAILY_LIMIT : FREE_DAILY_LIMIT;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const existing = await db.usageStat.findUnique({ where: { ipHash } });
 
   if (!existing || existing.lastUsed < today) {
-    return { allowed: true, remaining: FREE_DAILY_LIMIT };
+    return { allowed: true, remaining: limit };
   }
 
-  const remaining = Math.max(0, FREE_DAILY_LIMIT - existing.count);
+  const remaining = Math.max(0, limit - existing.count);
   return { allowed: remaining > 0, remaining };
 }
 
@@ -175,12 +180,22 @@ export async function POST(req: NextRequest) {
     }
 
     const ipHash = await getIpHash(req);
-    const rateLimit = await checkRateLimit(ipHash);
+
+    // Check if user is authenticated + Pro
+    const session = await getServerSession(authOptions);
+    const userPlan = (session?.user as { plan?: string } | undefined)?.plan;
+    const pro = isProUser(userPlan);
+    const userId = session?.user?.id;
+
+    const rateLimit = await checkRateLimit(ipHash, pro);
     if (!rateLimit.allowed) {
       return NextResponse.json(
         {
-          error: 'Daily free limit reached. Come back tomorrow or upgrade to Pro.',
+          error: pro
+            ? 'Daily Pro limit reached (100 roasts). Come back tomorrow.'
+            : 'Daily free limit reached. Come back tomorrow or upgrade to Pro for unlimited roasts.',
           remaining: 0,
+          pro,
         },
         { status: 429 }
       );
@@ -246,6 +261,7 @@ export async function POST(req: NextRequest) {
         language,
         score: typeof result.score === 'number' ? result.score : 0,
         ipHash,
+        userId: userId || null,
       },
     });
 

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, Github, Sparkles, Copy, Check, Twitter, ArrowRight, Zap, Lock, Globe, Star, ChevronDown, Loader2, Wand2, Check as CheckIcon } from 'lucide-react';
+import { Flame, Github, Sparkles, Copy, Check, Twitter, ArrowRight, Zap, Lock, Globe, Star, ChevronDown, Loader2, Wand2, Check as CheckIcon, Crown, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,12 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const [showPricing, setShowPricing] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [upgrading, setUpgrading] = useState(false);
+  const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false);
+
+  const { data: session, status } = useSession();
+  const isPro = (session?.user as { plan?: string } | undefined)?.plan === 'pro';
+  const isAuthenticated = status === 'authenticated' && !!session?.user;
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
@@ -172,6 +179,55 @@ export default function Home() {
     inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  // ============ STRIPE: Upgrade to Pro ============
+  const handleUpgrade = async () => {
+    if (!isAuthenticated) {
+      // Sign in first, then they can upgrade
+      await signIn('google', { callbackUrl: '/?upgrade=1' });
+      return;
+    }
+    if (isPro) return;
+    setUpgrading(true);
+    try {
+      const res = await fetch('/api/stripe/checkout', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || 'Failed to start checkout');
+      }
+      window.location.href = data.url;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Unknown error';
+      alert(`Upgrade failed: ${msg}`);
+    } finally {
+      setUpgrading(false);
+    }
+  };
+
+  // ============ Stripe Customer Portal (manage subscription) ============
+  const handleManageSubscription = async () => {
+    try {
+      const res = await fetch('/api/stripe/portal', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok || !data.url) throw new Error(data.error || 'Failed');
+      window.location.href = data.url;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Unknown error';
+      alert(`Failed: ${msg}`);
+    }
+  };
+
+  // Detect ?upgraded=1 in URL after successful checkout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('upgraded') === '1') {
+      setShowUpgradeSuccess(true);
+      // Clean URL
+      window.history.replaceState({}, '', '/');
+      // Refresh session to pick up new plan
+      window.location.reload();
+    }
+  }, []);
+
   const scrollToInput = () => {
     inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -250,7 +306,7 @@ export default function Home() {
               </AnimatePresence>
             </div>
             <a
-              href="https://github.com"
+              href="https://github.com/titkenan/roastmy-cv"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-neutral-100 transition px-2 py-1"
@@ -258,6 +314,44 @@ export default function Home() {
               <Github size={14} />
               <Star size={12} />
             </a>
+            {/* AUTH AREA */}
+            {isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                {isPro && (
+                  <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-[10px] px-2 py-0.5">
+                    <Crown size={10} className="mr-1" /> PRO
+                  </Badge>
+                )}
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-100 transition px-2 py-1 rounded-md hover:bg-neutral-900/60"
+                  title={session?.user?.email || ''}
+                >
+                  {session?.user?.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={session.user.image}
+                      alt=""
+                      className="w-5 h-5 rounded-full"
+                    />
+                  ) : (
+                    <span className="w-5 h-5 rounded-full bg-neutral-700 flex items-center justify-center text-[10px] font-bold">
+                      {(session?.user?.name || '?').charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                  <LogOut size={12} className="hidden sm:block" />
+                </button>
+              </div>
+            ) : (
+              <Button
+                onClick={() => signIn('google', { callbackUrl: '/' })}
+                size="sm"
+                variant="ghost"
+                className="text-xs text-neutral-300 hover:text-white hover:bg-neutral-900/60 px-2 py-1 h-auto"
+              >
+                {t.signInBtn}
+              </Button>
+            )}
           </nav>
         </div>
       </header>
@@ -553,7 +647,13 @@ export default function Home() {
               <div className="text-4xl font-bold mb-1">
                 {t.proPrice}<span className="text-base font-normal text-neutral-500">{t.proPeriod}</span>
               </div>
-              <div className="text-xs text-neutral-500 mb-4">{t.comingSoon}</div>
+              {isPro ? (
+                <div className="text-xs text-green-400 mb-4 flex items-center gap-1">
+                  <Check size={12} /> {t.proActiveLabel}
+                </div>
+              ) : (
+                <div className="text-xs text-neutral-500 mb-4">{t.comingSoon}</div>
+              )}
               <ul className="space-y-2 text-sm text-neutral-300">
                 {t.proFeatures.map((f) => (
                   <li key={f} className="flex items-start gap-2">
@@ -561,9 +661,33 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <Button disabled className="w-full mt-5 bg-neutral-800 text-neutral-500 cursor-not-allowed">
-                {t.proCta}
-              </Button>
+              {isPro ? (
+                <Button
+                  onClick={handleManageSubscription}
+                  variant="outline"
+                  className="w-full mt-5 bg-neutral-900 border-neutral-700 hover:bg-neutral-800 text-neutral-300"
+                >
+                  {t.manageSubscriptionBtn}
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleUpgrade}
+                  disabled={upgrading}
+                  className="w-full mt-5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white border-0 shadow-lg shadow-orange-500/30 disabled:opacity-60"
+                >
+                  {upgrading ? (
+                    <>
+                      <Loader2 size={16} className="mr-2 animate-spin" />
+                      {t.upgradingBtn}
+                    </>
+                  ) : (
+                    <>
+                      <Crown size={16} className="mr-2" />
+                      {t.proCta}
+                    </>
+                  )}
+                </Button>
+              )}
             </Card>
           </div>
         </div>
@@ -597,7 +721,13 @@ export default function Home() {
                 <div className="text-4xl font-bold mb-1">
                   {t.proPrice}<span className="text-base font-normal text-neutral-500">{t.proPeriod}</span>
                 </div>
-                <div className="text-xs text-neutral-500 mb-4">{t.comingSoon}</div>
+                {isPro ? (
+                  <div className="text-xs text-green-400 mb-4 flex items-center gap-1">
+                    <Check size={12} /> {t.proActiveLabel}
+                  </div>
+                ) : (
+                  <div className="text-xs text-neutral-500 mb-4">{t.comingSoon}</div>
+                )}
                 <ul className="space-y-2 text-sm text-neutral-300 mb-4">
                   {t.proFeatures.map((f) => (
                     <li key={f} className="flex items-start gap-2">
@@ -605,9 +735,36 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Button disabled className="w-full bg-neutral-800 text-neutral-500 cursor-not-allowed">
-                  {t.proCta}
-                </Button>
+                {isPro ? (
+                  <Button
+                    onClick={handleManageSubscription}
+                    variant="outline"
+                    className="w-full bg-neutral-900 border-neutral-700 hover:bg-neutral-800 text-neutral-300"
+                  >
+                    {t.manageSubscriptionBtn}
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      setShowPricing(false);
+                      handleUpgrade();
+                    }}
+                    disabled={upgrading}
+                    className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white border-0"
+                  >
+                    {upgrading ? (
+                      <>
+                        <Loader2 size={16} className="mr-2 animate-spin" />
+                        {t.upgradingBtn}
+                      </>
+                    ) : (
+                      <>
+                        <Crown size={16} className="mr-2" />
+                        {t.proCta}
+                      </>
+                    )}
+                  </Button>
+                )}
                 <Button variant="ghost" onClick={() => setShowPricing(false)} className="w-full mt-2 text-neutral-500">
                   {t.closeBtn}
                 </Button>
