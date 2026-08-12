@@ -1,0 +1,45 @@
+// AI Resume Roaster — Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Roast {
+  id        String   @id @default(cuid())
+  // Resume content (truncated for storage)
+  resumeText String
+  // Roast mode: "roast" | "professional" | "jobmatch"
+  mode      String   @default("roast")
+  // Target job title (optional, for jobmatch mode)
+  targetJob String?
+  // AI-generated roast content (JSON: { title, score, burns[], feedback[], suggestions[] })
+  result    String
+  // Public sharing
+  isPublic  Boolean  @default(false)
+  // Anonymous nickname for public gallery
+  nickname  String?
+  // Sharing slug (for /r/[slug] URLs)
+  slug      String   @unique
+  // Language: "tr" | "en"
+  language  String   @default("en")
+  // Resume score 0-100 (AI scored)
+  score     Int      @default(0)
+  // Client IP for rate limiting
+  ipHash    String?
+  createdAt DateTime @default(now())
+}
+
+model UsageStat {
+  id        String   @id @default(cuid())
+  ipHash    String
+  count     Int      @default(0)
+  lastUsed  DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@unique([ipHash])
+}

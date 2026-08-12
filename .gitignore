@@ -1,0 +1,73 @@
+# dependencies
+node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+Thumbs.db
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev.log
+*.log
+
+# env files (NEVER commit secrets)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# database
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+/db/
+
+# private keys (NEVER COMMIT)
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+glm5.key
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+._*
+
+# Vercel
+.vercel
+
+# Build artifacts
+dist/
+build/
+*.tsbuildinfo
+next-env.d.ts.bak
