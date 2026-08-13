@@ -652,7 +652,9 @@ export default function Home() {
                   <Check size={12} /> {t.proActiveLabel}
                 </div>
               ) : (
-                <div className="text-xs text-neutral-500 mb-4">{t.comingSoon}</div>
+                <div className="text-xs text-green-400 mb-4 flex items-center gap-1">
+                  <Check size={12} /> {t.proAvailability}
+                </div>
               )}
               <ul className="space-y-2 text-sm text-neutral-300">
                 {t.proFeatures.map((f) => (
@@ -726,7 +728,9 @@ export default function Home() {
                     <Check size={12} /> {t.proActiveLabel}
                   </div>
                 ) : (
-                  <div className="text-xs text-neutral-500 mb-4">{t.comingSoon}</div>
+                  <div className="text-xs text-green-400 mb-4 flex items-center gap-1">
+                    <Check size={12} /> {t.proAvailability}
+                  </div>
                 )}
                 <ul className="space-y-2 text-sm text-neutral-300 mb-4">
                   {t.proFeatures.map((f) => (

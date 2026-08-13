@@ -199,7 +199,7 @@ export interface UIText {
   proPeriod: string;
   proFeatures: string[];
   proCta: string;
-  comingSoon: string;
+  proAvailability: string;
   remaining: string;
   rateLimited: string;
   footerMadeBy: string;
@@ -271,7 +271,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       'Priority AI model',
     ],
     proCta: 'Upgrade to Pro',
-    comingSoon: 'Coming soon',
+    proAvailability: 'Available now — cancel anytime',
     remaining: 'roasts left today',
     rateLimited: "You've hit the daily limit. Come back tomorrow!",
     footerMadeBy: 'Built with 🔥 by humans + AI',
@@ -340,7 +340,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       'Öncelikli AI modeli',
     ],
     proCta: "Pro'ya geç",
-    comingSoon: 'Yakında',
+    proAvailability: 'Şimdi kullanılabilir — istediğin zaman iptal et',
     remaining: 'bugün kaldı',
     rateLimited: 'Günlük limitine ulaştın. Yarın gel!',
     footerMadeBy: '🔥 ile insanlar + AI tarafından yapıldı',
@@ -409,7 +409,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       'Prioritäts-KI-Modell',
     ],
     proCta: 'Auf Pro upgraden',
-    comingSoon: 'Bald verfügbar',
+    proAvailability: 'Jetzt verfügbar — jederzeit kündbar',
     remaining: 'Roasts heute übrig',
     rateLimited: 'Tageslimit erreicht. Komm morgen wieder!',
     footerMadeBy: 'Gebaut mit 🔥 von Menschen + KI',
@@ -478,7 +478,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       'Modelo de IA prioritario',
     ],
     proCta: 'Mejorar a Pro',
-    comingSoon: 'Próximamente',
+    proAvailability: 'Disponible ahora — cancela cuando quieras',
     remaining: 'roasts hoy quedan',
     rateLimited: 'Alcanzaste el límite diario. ¡Vuelve mañana!',
     footerMadeBy: 'Hecho con 🔥 por humanos + IA',
@@ -547,7 +547,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       'Modèle IA prioritaire',
     ],
     proCta: 'Passer à Pro',
-    comingSoon: 'Bientôt disponible',
+    proAvailability: 'Disponible maintenant — annulez à tout moment',
     remaining: 'roasts restants aujourd\'hui',
     rateLimited: 'Limite quotidienne atteinte. Reviens demain !',
     footerMadeBy: 'Construit avec 🔥 par des humains + IA',
@@ -616,7 +616,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       'Modello IA prioritario',
     ],
     proCta: 'Passa a Pro',
-    comingSoon: 'Prossimamente',
+    proAvailability: 'Disponibile ora — cancella quando vuoi',
     remaining: 'roast rimasti oggi',
     rateLimited: 'Limite giornaliero raggiunto. Torna domani!',
     footerMadeBy: 'Costruito con 🔥 da umani + IA',
@@ -685,7 +685,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       'Modelo de IA prioritário',
     ],
     proCta: 'Atualizar para Pro',
-    comingSoon: 'Em breve',
+    proAvailability: 'Disponível agora — cancele quando quiser',
     remaining: 'roasts restam hoje',
     rateLimited: 'Você atingiu o limite diário. Volte amanhã!',
     footerMadeBy: 'Feito com 🔥 por humanos + IA',
@@ -754,7 +754,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       'Приоритетная модель ИИ',
     ],
     proCta: 'Перейти на Pro',
-    comingSoon: 'Скоро',
+    proAvailability: 'Доступно сейчас — отмена в любой момент',
     remaining: 'ростов осталось сегодня',
     rateLimited: 'Дневной лимит достигнут. Возвращайся завтра!',
     footerMadeBy: 'Сделано с 🔥 людьми + ИИ',
@@ -823,7 +823,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       'Prioriteits-AI-model',
     ],
     proCta: 'Upgrade naar Pro',
-    comingSoon: 'Binnenkort',
+    proAvailability: 'Nu beschikbaar — opzeggen wanneer je wilt',
     remaining: 'roasts over vandaag',
     rateLimited: 'Daglimiet bereikt. Kom morgen terug!',
     footerMadeBy: 'Gebouwd met 🔥 door mensen + AI',
@@ -892,7 +892,7 @@ export const UI_TEXT: Record<Language, UIText> = {
       '优先 AI 模型',
     ],
     proCta: '升级到专业版',
-    comingSoon: '即将推出',
+    proAvailability: '现已推出 — 随时取消',
     remaining: '今日剩余',
     rateLimited: '已达每日上限。明天再来！',
     footerMadeBy: '由人类 + AI 用 🔥 打造',
